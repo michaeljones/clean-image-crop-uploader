@@ -1,5 +1,10 @@
+
+try:
+    import json
+except ImportError:
+    import django.utils.simplejson as json
+
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.utils import simplejson
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.core.files import File
@@ -28,9 +33,9 @@ def upload(request):
             'width' : width,
             'height' : height,
         }
-        return HttpResponse(simplejson.dumps(data))
+        return HttpResponse(json.dumps(data))
     else:
-        return HttpResponseBadRequest(simplejson.dumps({'errors': form.errors}))
+        return HttpResponseBadRequest(json.dumps({'errors': form.errors}))
 
 @csrf_exempt
 @require_POST
@@ -67,7 +72,7 @@ def crop(request):
                 'id' : new_file.id,
             }
 
-            return HttpResponse(simplejson.dumps(data))
+            return HttpResponse(json.dumps(data))
 
     except Exception:
-        return HttpResponseBadRequest(simplejson.dumps({'errors': 'illegal request'}))
+        return HttpResponseBadRequest(json.dumps({'errors': 'illegal request'}))
