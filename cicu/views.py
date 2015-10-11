@@ -47,7 +47,7 @@ def crop(request):
             imageId = request.POST.get('id', None)
             uploaded_file = UploadedFile.objects.get(id=imageId)
             img = Image.open(uploaded_file.file.path, mode='r')
-            values = [int(x) for x in box.split(',')]
+            values = [int(float(x)) for x in box.split(',')]
 
             width = abs(values[2] - values[0])
             height = abs(values[3] - values[1])
