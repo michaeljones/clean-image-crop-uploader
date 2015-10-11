@@ -76,12 +76,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         var self = this;
         this.name = this.$element.attr('name');
         this.modalId = this.name + '-uploadModal';
-        this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn upload-btn" data-toggle="modal">'+this.options['modalButtonLabel']+'</a>');
+        this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn upload-btn" data-toggle="modal" data-target="#'+this.modalId+'">'+this.options['modalButtonLabel']+'</a>');
         this.$croppedImagePreview = $('<div class="cropped-imag-preview"><img src="'+this.$element.data('filename')+'"/></div>');
         this.$croppedImagePreview.append(this.$modalButton);
         this.$element.after(this.$croppedImagePreview);
 
-        this.$modalWindow = $('<div id="' + this.modalId + '" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
+        this.$modalWindow = $('<div id="' + this.modalId + '" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >' +
+            '<div class="modal-dialog">' +
+            '<div class="modal-content">' +
             '<div class="modal-body image-body-modal">' +
             '' +
             '</div>' +
@@ -89,10 +91,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             '<button class="btn" data-dismiss="modal" aria-hidden="true">'+this.options.modalCloseCropMessage+'</button>' +
             '<button class="modal-set-image-button btn btn-primary disabled">'+this.options.modalSaveCropMessage+'</button>' +
             '</div>' +
+            '</div>' +
+            '</div>' +
             '</div>');
 
         this.$element.after(this.$modalWindow);
-        this.$uploadModalBody = this.$modalWindow.children('div.modal-body');
+        this.$uploadModalBody = this.$modalWindow.find('div.modal-body');
         this.$warningSize = $('<div class="warning-size-message alert alert-error hide"></div>');
 
         this.$uploadModalBody.before(this.$warningSize);
