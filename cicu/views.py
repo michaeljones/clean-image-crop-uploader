@@ -29,13 +29,14 @@ def upload(request):
         width, height = img.size
         data = {
             'path': uploaded_file.file.url,
-            'id' : uploaded_file.id,
-            'width' : width,
-            'height' : height,
+            'id': uploaded_file.id,
+            'width': width,
+            'height': height,
         }
         return HttpResponse(json.dumps(data))
     else:
         return HttpResponseBadRequest(json.dumps({'errors': form.errors}))
+
 
 @csrf_exempt
 @require_POST
@@ -45,21 +46,21 @@ def crop(request):
             box = request.POST.get('cropping', None)
             imageId = request.POST.get('id', None)
             uploaded_file = UploadedFile.objects.get(id=imageId)
-            img = Image.open( uploaded_file.file.path, mode='r' )
+            img = Image.open(uploaded_file.file.path, mode='r')
             values = [int(x) for x in box.split(',')]
 
             width = abs(values[2] - values[0])
             height = abs(values[3] - values[1])
             if width and height and (width != img.size[0] or height != img.size[1]):
-                croppedImage = img.crop(values).resize((width,height),Image.ANTIALIAS)
+                croppedImage = img.crop(values).resize((width, height), Image.ANTIALIAS)
 
             else:
                 raise
 
-            pathToFile = path.join(settings.MEDIA_ROOT,IMAGE_CROPPED_UPLOAD_TO)
+            pathToFile = path.join(settings.MEDIA_ROOT, IMAGE_CROPPED_UPLOAD_TO)
             if not path.exists(pathToFile):
                 makedirs(pathToFile)
-            pathToFile = path.join(pathToFile,uploaded_file.file.path.split(sep)[-1])
+            pathToFile = path.join(pathToFile, uploaded_file.file.path.split(sep)[-1])
             croppedImage.save(pathToFile)
 
             new_file = UploadedFile()
@@ -69,7 +70,7 @@ def crop(request):
 
             data = {
                 'path': new_file.file.url,
-                'id' : new_file.id,
+                'id': new_file.id,
             }
 
             return HttpResponse(json.dumps(data))
