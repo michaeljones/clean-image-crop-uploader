@@ -84,7 +84,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         var self = this;
         this.modalId = this.name + '-uploadModal';
         this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn btn-primary upload-btn" data-toggle="modal" data-target="#'+this.modalId+'">'+this.options['modalButtonLabel']+'</a>');
-        this.$croppedImagePreview = $('<div class="cropped-imag-preview"><img src="'+this.$element.data('filename')+'"/></div>');
+        this.$croppedImagePreview = $('<div class="cropped-image-preview"><img src="'+this.$element.data('filename')+'"/></div>');
         this.$croppedImagePreview.append(this.$modalButton);
         this.$element.after(this.$croppedImagePreview);
 
