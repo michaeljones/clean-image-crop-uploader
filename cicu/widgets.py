@@ -1,14 +1,17 @@
+
 from django import forms
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
+
 from PIL import Image
+
 from .models import UploadedFile
 
 # Basic configuration for jcrop from django
 optionsInput = """
-<input id="cicu-options"
+<input id="cicu-options-%s"
        data-size-warning="%s"
        data-ratio-width="%s"
        data-ratio-height="%s"
@@ -79,7 +82,7 @@ class CicuUploaderInput(forms.ClearableFileInput):
             'accept': 'image/*',
         })
         output = super(CicuUploaderInput, self).render(name, value, attrs)
-        option = optionsInput % self.options
+        option = optionsInput % ((name,) + self.options)
         autoDiscoverScript = "<script>$(function(){CicuWidget.autoDiscover();});</script>"
         return mark_safe(output + option + autoDiscoverScript)
 

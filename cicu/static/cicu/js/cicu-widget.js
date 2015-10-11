@@ -52,8 +52,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 onRemove: null,
                 onCrop: null
             };
-            $.extend(this.options, options);
+
             this.$element = $(element);
+            this.name = this.$element.attr('name');
+
+            var cicuOptions = $('#cicu-options-' + this.name);
+            options = cicuOptions.data();
+            cicuOptions.remove();
+
+            $.extend(this.options, options);
+
             $('label[for='+this.$element.attr('id')+']:first').removeAttr('for');
             this.initialize();
             $(element).addClass('has-cicu-widget');
@@ -74,7 +82,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     CicuWidget.prototype.initialize = function() {
         var self = this;
-        this.name = this.$element.attr('name');
         this.modalId = this.name + '-uploadModal';
         this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn upload-btn" data-toggle="modal" data-target="#'+this.modalId+'">'+this.options['modalButtonLabel']+'</a>');
         this.$croppedImagePreview = $('<div class="cropped-imag-preview"><img src="'+this.$element.data('filename')+'"/></div>');
@@ -281,12 +288,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         return output;
     };
 
-    CicuWidget.autoDiscover = function(options) {
-        var cicuOptions = $( '#cicu-options');
-        options =  cicuOptions.data();
-        cicuOptions.remove();
+    CicuWidget.autoDiscover = function() {
         $('input[type="file"].ajax-upload:not(.has-cicu-widget)').each(function(index, element) {
-            new CicuWidget(element, options);
+            new CicuWidget(element);
         });
     };
 }).call(this);
@@ -305,7 +309,9 @@ var image_cropping = {
             'div.jcrop-image.size-warning .jcrop-hline{border:1px solid red; background: none;}';
         image_cropping.$("<style type='text/css'>" + style_img_warning + "</style>").appendTo('head');
 
-        image_cropping.$('input.image-ratio').each(function() {
+        var modalId = '#' + ajaxUploadWidget.modalId;
+
+        image_cropping.$(modalId + ' input.image-ratio').each(function() {
             var $this = image_cropping.$(this),
             // find the image field corresponding to this cropping value
             // by stripping the last part of our id and appending the image field name
@@ -313,7 +319,7 @@ var image_cropping = {
 
             // there should only be one file field we're referencing but in special cases
             // there can be several. Deal with it gracefully.
-                $image_input = image_cropping.$('input.crop-thumb[data-field-name=' + field + ']:first');
+                $image_input = image_cropping.$(modalId + ' input.crop-thumb[data-field-name=' + field + ']:first');
 
             // skip this image if it's empty and hide the whole field, within admin and by itself
             if (!$image_input.length || $image_input.data('thumbnail-url') == undefined) {
