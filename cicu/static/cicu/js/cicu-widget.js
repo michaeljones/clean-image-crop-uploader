@@ -90,7 +90,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
         this.$modalWindow = $('<div id="' + this.modalId + '" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >' +
             '<div class="modal-dialog">' +
-            '<div class="modal-content">' +
+            '<div class="modal-content image-upload-modal">' +
             '<div class="modal-body image-body-modal">' +
             '' +
             '</div>' +
