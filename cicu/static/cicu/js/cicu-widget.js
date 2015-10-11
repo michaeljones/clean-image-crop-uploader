@@ -83,7 +83,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     CicuWidget.prototype.initialize = function() {
         var self = this;
         this.modalId = this.name + '-uploadModal';
-        this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn upload-btn" data-toggle="modal" data-target="#'+this.modalId+'">'+this.options['modalButtonLabel']+'</a>');
+        this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn btn-primary upload-btn" data-toggle="modal" data-target="#'+this.modalId+'">'+this.options['modalButtonLabel']+'</a>');
         this.$croppedImagePreview = $('<div class="cropped-imag-preview"><img src="'+this.$element.data('filename')+'"/></div>');
         this.$croppedImagePreview.append(this.$modalButton);
         this.$element.after(this.$croppedImagePreview);
@@ -123,7 +123,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             self.upload();
         });
         this.$uploadButton = $('<div class="fileupload fileupload-new" data-provides="fileupload"><span class="btn btn-file">' +
-            '<span class="fileupload-label fileupload-new" data-loading-text="Uploading your image...">'+this.options.fileUploadLabel+'</span></span>'+
+            '<span class="btn btn-primary fileupload-label fileupload-new" data-loading-text="Uploading your image...">'+this.options.fileUploadLabel+'</span></span>'+
             '</div>');
         this.$uploadModalBody.append(this.$uploadButton);
         this.$fileUploadLabel = this.$uploadButton.find('.fileupload-label');
