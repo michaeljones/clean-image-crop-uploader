@@ -44,13 +44,19 @@ def crop(request):
     try:
         if request.method == 'POST':
             box = request.POST.get('cropping', None)
+            ratios = request.POST.get('ratios', None)
             imageId = request.POST.get('id', None)
             uploaded_file = UploadedFile.objects.get(id=imageId)
             img = Image.open(uploaded_file.file.path, mode='r')
             values = [int(float(x)) for x in box.split(',')]
 
-            width = abs(values[2] - values[0])
-            height = abs(values[3] - values[1])
+            if ratios:
+                pair = ratios.split(',')
+                width = int(float(pair[0]))
+                height = int(float(pair[1]))
+            else:
+                width = abs(values[2] - values[0])
+                height = abs(values[3] - values[1])
             if width and height and (width != img.size[0] or height != img.size[1]):
                 croppedImage = img.crop(values).resize((width, height), Image.ANTIALIAS)
 

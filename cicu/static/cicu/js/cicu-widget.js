@@ -136,13 +136,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             return false;
         });
     };
+
     CicuWidget.prototype.setCrop = function() {
         var self = this;
 
         $.ajax(this.$element.data('crop-url'), {
-            iframe : true,
-            data : {cropping : this.$cropping.val(),
-            id : this.$hiddenElement.data('imageId')},
+            iframe: true,
+            data: {
+                cropping : this.$cropping.val(),
+                ratios : this.options.ratioWidth + "," + this.options.ratioHeight,
+                id : this.$hiddenElement.data('imageId')
+            },
             type: 'POST',
             dataType: 'json',
             success: function(data) { self.cropDone(data); },
