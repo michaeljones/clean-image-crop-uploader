@@ -14,5 +14,5 @@ class UploadedFileForm(forms.ModelForm):
         data = self.cleaned_data['file']
         # Change the name of the file to something unguessable
         # Construct the new name as <unique-hex>-<original>.<ext>
-        data.name = u'%s-%s' % (uuid.uuid4().hex, data.name)
+        data.name = u'%s' % uuid.uuid4().hex
         return data

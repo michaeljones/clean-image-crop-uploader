@@ -52,8 +52,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 onRemove: null,
                 onCrop: null
             };
-            $.extend(this.options, options);
+
             this.$element = $(element);
+            this.name = this.$element.attr('name');
+
+            var cicuOptions = $('#cicu-options-' + this.name);
+            options = cicuOptions.data();
+            cicuOptions.remove();
+
+            $.extend(this.options, options);
+
             $('label[for='+this.$element.attr('id')+']:first').removeAttr('for');
             this.initialize();
             $(element).addClass('has-cicu-widget');
@@ -74,14 +82,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     CicuWidget.prototype.initialize = function() {
         var self = this;
-        this.name = this.$element.attr('name');
         this.modalId = this.name + '-uploadModal';
-        this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn upload-btn" data-toggle="modal">'+this.options['modalButtonLabel']+'</a>');
-        this.$croppedImagePreview = $('<div class="cropped-imag-preview"><img src="'+this.$element.data('filename')+'"/></div>');
+        this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn btn-primary upload-btn" data-toggle="modal" data-target="#'+this.modalId+'">'+this.options['modalButtonLabel']+'</a>');
+        this.$croppedImagePreview = $('<div class="cropped-image-preview"><img src="'+this.$element.data('filename')+'"/></div>');
         this.$croppedImagePreview.append(this.$modalButton);
         this.$element.after(this.$croppedImagePreview);
 
-        this.$modalWindow = $('<div id="' + this.modalId + '" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">' +
+        this.$modalWindow = $('<div id="' + this.modalId + '" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >' +
+            '<div class="modal-dialog">' +
+            '<div class="modal-content image-upload-modal">' +
             '<div class="modal-body image-body-modal">' +
             '' +
             '</div>' +
@@ -89,10 +98,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             '<button class="btn" data-dismiss="modal" aria-hidden="true">'+this.options.modalCloseCropMessage+'</button>' +
             '<button class="modal-set-image-button btn btn-primary disabled">'+this.options.modalSaveCropMessage+'</button>' +
             '</div>' +
+            '</div>' +
+            '</div>' +
             '</div>');
 
         this.$element.after(this.$modalWindow);
-        this.$uploadModalBody = this.$modalWindow.children('div.modal-body');
+        this.$uploadModalBody = this.$modalWindow.find('div.modal-body');
         this.$warningSize = $('<div class="warning-size-message alert alert-error hide"></div>');
 
         this.$uploadModalBody.before(this.$warningSize);
@@ -112,7 +123,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             self.upload();
         });
         this.$uploadButton = $('<div class="fileupload fileupload-new" data-provides="fileupload"><span class="btn btn-file">' +
-            '<span class="fileupload-label fileupload-new" data-loading-text="Uploading your image...">'+this.options.fileUploadLabel+'</span></span>'+
+            '<span class="btn btn-primary fileupload-label fileupload-new" data-loading-text="Uploading your image...">'+this.options.fileUploadLabel+'</span></span>'+
             '</div>');
         this.$uploadModalBody.append(this.$uploadButton);
         this.$fileUploadLabel = this.$uploadButton.find('.fileupload-label');
@@ -125,13 +136,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             return false;
         });
     };
+
     CicuWidget.prototype.setCrop = function() {
         var self = this;
 
         $.ajax(this.$element.data('crop-url'), {
-            iframe : true,
-            data : {cropping : this.$cropping.val(),
-            id : this.$hiddenElement.data('imageId')},
+            iframe: true,
+            data: {
+                cropping : this.$cropping.val(),
+                ratios : this.options.ratioWidth + "," + this.options.ratioHeight,
+                id : this.$hiddenElement.data('imageId')
+            },
             type: 'POST',
             dataType: 'json',
             success: function(data) { self.cropDone(data); },
@@ -277,12 +292,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         return output;
     };
 
-    CicuWidget.autoDiscover = function(options) {
-        var cicuOptions = $( '#cicu-options');
-        options =  cicuOptions.data();
-        cicuOptions.remove();
+    CicuWidget.autoDiscover = function() {
         $('input[type="file"].ajax-upload:not(.has-cicu-widget)').each(function(index, element) {
-            new CicuWidget(element, options);
+            new CicuWidget(element);
         });
     };
 }).call(this);
@@ -301,7 +313,9 @@ var image_cropping = {
             'div.jcrop-image.size-warning .jcrop-hline{border:1px solid red; background: none;}';
         image_cropping.$("<style type='text/css'>" + style_img_warning + "</style>").appendTo('head');
 
-        image_cropping.$('input.image-ratio').each(function() {
+        var modalId = '#' + ajaxUploadWidget.modalId;
+
+        image_cropping.$(modalId + ' input.image-ratio').each(function() {
             var $this = image_cropping.$(this),
             // find the image field corresponding to this cropping value
             // by stripping the last part of our id and appending the image field name
@@ -309,7 +323,7 @@ var image_cropping = {
 
             // there should only be one file field we're referencing but in special cases
             // there can be several. Deal with it gracefully.
-                $image_input = image_cropping.$('input.crop-thumb[data-field-name=' + field + ']:first');
+                $image_input = image_cropping.$(modalId + ' input.crop-thumb[data-field-name=' + field + ']:first');
 
             // skip this image if it's empty and hide the whole field, within admin and by itself
             if (!$image_input.length || $image_input.data('thumbnail-url') == undefined) {
