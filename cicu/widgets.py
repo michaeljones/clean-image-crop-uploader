@@ -40,6 +40,8 @@ class CicuUploaderInput(forms.ClearableFileInput):
             options = {}
         super(CicuUploaderInput, self).__init__(attrs)
 
+        self.use_custom_css = options.get('use_custom_css', False)
+
         # Jcrop configuration
         self.options = ()
         self.options += (options.get('sizeWarning', 'True'),)
@@ -108,11 +110,18 @@ class CicuUploaderInput(forms.ClearableFileInput):
                 return None
         return None
 
-    class Media:
+    def _media(self):
+
         js = (
             "cicu/js/jquery.Jcrop.min.js",
             "cicu/js/jquery.iframe-transport.js",
             "cicu/js/cicu-widget.js",
             )
 
-        css = {'all': ("cicu/css/jquery.Jcrop.min.css", "cicu/css/cicu-widget.css")}
+        css = ["cicu/css/jquery.Jcrop.min.css"]
+        if not self.use_custom_css:
+            css.append("cicu/css/cicu-widget.css")
+
+        return forms.widgets.Media(css={'all': css}, js=js)
+
+    media = property(_media)
