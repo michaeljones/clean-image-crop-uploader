@@ -41,45 +41,42 @@ def upload(request):
 @csrf_exempt
 @require_POST
 def crop(request):
-    try:
-        if request.method == 'POST':
-            box = request.POST.get('cropping', None)
-            ratios = request.POST.get('ratios', None)
-            imageId = request.POST.get('id', None)
-            uploaded_file = UploadedFile.objects.get(id=imageId)
-            img = Image.open(uploaded_file.file.path, mode='r')
-            values = [int(float(x)) for x in box.split(',')]
 
-            if ratios:
-                pair = ratios.split(',')
-                width = int(float(pair[0]))
-                height = int(float(pair[1]))
-            else:
-                width = abs(values[2] - values[0])
-                height = abs(values[3] - values[1])
-            if width and height and (width != img.size[0] or height != img.size[1]):
-                croppedImage = img.crop(values).resize((width, height), Image.ANTIALIAS)
+    if request.method == 'POST':
+        box = request.POST.get('cropping', None)
+        ratios = request.POST.get('ratios', None)
+        imageId = request.POST.get('id', None)
+        uploaded_file = UploadedFile.objects.get(id=imageId)
+        img = Image.open(uploaded_file.file.path, mode='r')
+        values = [int(float(x)) for x in box.split(',')]
 
-            else:
-                raise
+        if ratios:
+            pair = ratios.split(',')
+            width = int(float(pair[0]))
+            height = int(float(pair[1]))
+        else:
+            width = abs(values[2] - values[0])
+            height = abs(values[3] - values[1])
 
-            pathToFile = path.join(settings.MEDIA_ROOT, IMAGE_CROPPED_UPLOAD_TO)
-            if not path.exists(pathToFile):
-                makedirs(pathToFile)
-            pathToFile = path.join(pathToFile, uploaded_file.file.path.split(sep)[-1])
-            croppedImage.save(pathToFile)
+        if width and height and (width != img.size[0] or height != img.size[1]):
+            croppedImage = img.crop(values).resize((width, height), Image.ANTIALIAS)
+        else:
+            croppedImage = img
 
-            new_file = UploadedFile()
-            f = open(pathToFile, mode='rb')
-            new_file.file.save(uploaded_file.file.name, File(f))
-            f.close()
+        pathToFile = path.join(settings.MEDIA_ROOT, IMAGE_CROPPED_UPLOAD_TO)
+        if not path.exists(pathToFile):
+            makedirs(pathToFile)
+        pathToFile = path.join(pathToFile, uploaded_file.file.path.split(sep)[-1])
+        croppedImage.save(pathToFile)
 
-            data = {
-                'path': new_file.file.url,
-                'id': new_file.id,
-            }
+        new_file = UploadedFile()
+        f = open(pathToFile, mode='rb')
+        new_file.file.save(uploaded_file.file.name, File(f))
+        f.close()
 
-            return HttpResponse(json.dumps(data))
+        data = {
+            'path': new_file.file.url,
+            'id': new_file.id,
+        }
 
-    except Exception:
-        return HttpResponseBadRequest(json.dumps({'errors': 'illegal request'}))
+        return HttpResponse(json.dumps(data))
