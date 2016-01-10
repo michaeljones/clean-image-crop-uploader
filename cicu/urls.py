@@ -1,7 +1,8 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
+from . import views
 
-urlpatterns = patterns('cicu.views',
-    url(r'^$', 'upload', name='ajax-upload'),
-    url(r'^crop/$', 'crop', name='cicu-crop'),
-)
+urlpatterns = [
+    url(r'^$', views.upload, name='ajax-upload'),
+    url(r'^crop/$', views.crop, name='cicu-crop'),
+]
