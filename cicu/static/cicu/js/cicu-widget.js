@@ -84,8 +84,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         var self = this;
         this.modalId = this.name + '-uploadModal';
         this.$modalButton = $('<a href="#' + this.modalId +'" role="button" class="btn btn-primary upload-btn" data-toggle="modal" data-target="#'+this.modalId+'" data-backdrop="static">'+this.options['modalButtonLabel']+'</a>');
+        var filename = this.$element.data('filename');
+        this.$clearButton = $('<button class="btn btn-primary' + (filename ? '' : ' hidden') + '" style="margin-left: 10px;">Clear</button>');
+        this.$clearCheckbox = $('<input type="checkbox" name="' + this.name + '-clear" class="hidden">');
         this.$croppedImagePreview = $('<div class="cropped-image-preview"><img src="'+this.$element.data('filename')+'"/></div>');
         this.$croppedImagePreview.append(this.$modalButton);
+        this.$croppedImagePreview.append(this.$clearButton);
+        this.$croppedImagePreview.append(this.$clearCheckbox);
         this.$element.after(this.$croppedImagePreview);
 
         this.$modalWindow = $('<div id="' + this.modalId + '" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >' +
@@ -135,6 +140,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             }
             return false;
         });
+
+        this.$clearButton.on('click', function(event) {
+            self.$croppedImagePreview.children('img:first').addClass('hidden');
+            self.$clearCheckbox.prop('checked', true);
+            self.$clearButton.addClass('hidden');
+
+            event.preventDefault();
+            event.stopPropagation();
+        });
     };
 
     CicuWidget.prototype.setCrop = function() {
@@ -168,6 +182,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         } else {
             this.$hiddenElement.val(data.id);
             this.$croppedImagePreview.children('img:first').attr('src',data.path);
+            this.$croppedImagePreview.children('img:first').removeClass('hidden');
+            this.$clearButton.removeClass('hidden');
+            this.$clearCheckbox.prop('checked', false);
             this.$modalWindow.modal('hide');
         }
         if(this.options.onCrop) {
