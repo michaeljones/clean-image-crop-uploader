@@ -68,7 +68,7 @@ class CicuUploaderInput(forms.ClearableFileInput):
         self.options += (options.get('uploadingMessage', _('Uploading your image')),)
         self.options += (options.get('fileUploadLabel', _('Select image from your computer')),)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         attrs = attrs or {}
         if value:
             filename = u'%s%s' % (settings.MEDIA_URL, value)
