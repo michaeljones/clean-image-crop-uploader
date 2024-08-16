@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.upload, name='ajax-upload'),
-    url(r'^crop/$', views.crop, name='cicu-crop'),
+    re_path(r'^$', views.upload, name='ajax-upload'),
+    re_path(r'^crop/$', views.crop, name='cicu-crop'),
 ]
