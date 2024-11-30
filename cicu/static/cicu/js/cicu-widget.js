@@ -339,7 +339,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                     $self.options.ratioWidth +
                     '" data-height="' +
                     $self.options.ratioHeight +
-                    '"  data-allow-fullsize="false" name="cropping" maxlength="255" value="300,100,600,600" class="image-ratio" data-image-field="image_field" data-adapt-rotation="false" type="text" data-my-name="cropping" style="display: none;" />'
+                    '"  data-allow-fullsize="false" name="cropping" maxlength="255" class="image-ratio" data-image-field="image_field" data-adapt-rotation="false" type="text" data-my-name="cropping" style="display: none;" />'
                 output +=
                     '<input data-org-width="' +
                     width +
